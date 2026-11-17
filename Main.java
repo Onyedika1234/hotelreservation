@@ -9,7 +9,7 @@ public class Main {
         boolean isRunning = true;
         int arraySize = 0;
 
-        Customer[] customers;
+        Customer[] customers = new Customer[2000];
         Customer customer;
         int customerCount = 0;
 
@@ -21,7 +21,7 @@ public class Main {
         final String adminPassword = "onyedika3328";
 
         System.out.println("*****************************************");
-        System.out.println("Welcome to Hotel Reservation Appplication");
+        System.out.println("Welcome to Hotel Reservation Application");
         System.out.println("*****************************************");
 
         
@@ -53,20 +53,9 @@ public class Main {
         role = "ADMIN";
         }
 
-        // if(role.equals("ADMIN")) {
-        // System.out.print("How many rooms would you like to manage: ");
-        // arraySize = scanner.nextInt();
-        // scanner.nextLine();
-
-        // if(arraySize <= 10) {
-        //     System.out.println("Users to be managed must be greated than 10");
-        //     return;
-        // }
-        // rooms = new Room[arraySize];
-        // }
         switch(role) {
             case "CUSTOMER" -> userLogics();
-            case  "ADMIN" -> adminLogic(arraySize, rooms, roomCount);
+            case  "ADMIN" -> adminLogics(arraySize, rooms, roomCount,customers, customerCount);
             default -> System.out.println("Invalid role");
         }
         scanner.close();
@@ -146,7 +135,7 @@ public class Main {
         System.out.println("this is the parent of all the customer logic");
     }
 
-   static public void adminLogic(int arraySize, Room[] rooms, int roomCount) {
+   static public void adminLogics(int arraySize, Room[] rooms, int roomCount,Customer[] customers, int customerCount) {
         boolean isRunning = true;
         int adminOption = 0;
         while (isRunning) {
@@ -155,9 +144,9 @@ public class Main {
         switch (adminOption) {
         case 1 -> roomCount = addNewRoom(rooms, roomCount);
         case 2 -> viewRooms(rooms, roomCount);
-        case 3-> System.out.println("Update room information");
+        case 3-> rooms = updateRoom(rooms, roomCount);
         case 4-> System.out.println("remove rooms");
-        case 5 -> System.out.println("View all customers");
+        case 5 -> viewCustomers(customers, customerCount);
         case 6-> System.out.println("View all reservations");
         case 7 -> System.out.println("Search reservations");
         case 8 -> System.out.println("Manage cancellations");
@@ -238,28 +227,83 @@ public class Main {
         return roomCount;
     }
 
-    static public void viewRooms(Room[] rooms, int roomCount){
-        if(rooms.length == 0) {
-            System.out.println("No rooms available.");
-            return;
-        }
+    static public void viewRooms(Room[] rooms, int roomCount) {
         if(roomCount <= 0) {
-            System.out.println("There is no room");
+            System.out.println("There are no rooms available.");
             return;
         }
 
         System.out.println("Rooms");
 
         for(int i = 0; i < roomCount; i++) {
+            System.out.println("\nRoom ID: " + rooms[i].getId());
+            System.out.println("Room Number: " + rooms[i].getroomNumber());
+            System.out.println("Category: " + rooms[i].getCategory());
+            System.out.println("Description: " + rooms[i].getDescription());
+            System.out.println("Price: " + rooms[i].getPricePerNight());
+            System.out.println("Capacity: " + rooms[i].getCapacity());
+            System.out.println(rooms[i].active ? "ACTIVE" : "INACTIVE");
+        }
+    }
+
+    static public void viewCustomers(Customer[] customers, int customerCount) {
+        for(int i =0; i < customerCount; i++) {
             System.out.println("\n");
-            System.out.println(rooms[i].roomNumber);
-            System.out.println(rooms[i].description);
-            System.out.println(rooms[i].pricePerNight);
-            System.out.println(rooms[i].capacity);
-            System.out.println(rooms[i].active ? "ACTIVE": "TAKEN");
+            System.out.println(customers[i].name);
+            System.out.println(customers[i].email);
             System.out.println("\n");
         }
     }
 
+    static public Room[] updateRoom(Room[] rooms, int roomCount) {
+        System.out.print("Input the id of the room you would like to update: ");
+        int id = scanner.nextInt();
+        scanner.nextLine();
+
+        System.out.println("Which field would you like to change");
+        System.out.println("1. Category");
+        System.out.println("2. Price");
+        System.out.println("3. Capacity");
+        System.out.println("4. Description");
+        System.out.print("Choose an option: ");
+        int updateOption = scanner.nextInt();
+        scanner.nextLine();
+
+        if(updateOption < 1 || updateOption > 4) {
+            System.out.println("Invalid option.");
+            return rooms;
+        }
+
+        for(int i = 0; i< roomCount; i++){
+            if(rooms[i].getId() == id) {
+                if(updateOption == 1) {
+                    System.out.print("Enter the new category: ");
+                    String category = scanner.nextLine();
+
+                    rooms[i].setCategory(category);
+                }else if(updateOption == 2) {
+                    System.out.print("Enter the new price per night: ");
+                    double price = scanner.nextDouble();
+                    scanner.nextLine();
+                    rooms[i].setPricePerNight(price);
+                }else if(updateOption == 3){
+                    System.out.print("Enter the new capacity of the room: ");
+                    int capacity = scanner.nextInt();
+                    scanner.nextLine();
+
+                    rooms[i].setCapacity(capacity);
+                }else {
+                    System.out.print("Enter the new description: ");
+                    String description = scanner.nextLine();
+
+                    rooms[i].setDescription(description);
+                }
+
+                break;
+            }
+        }
+
+        return rooms;
+    }
 }
 
